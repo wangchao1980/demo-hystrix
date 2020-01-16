@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: demo-hystrix
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  cloud:
+    loadbalancer:
+      retry:
+        enabled: true
+eureka:
+  instance:
+    hostname: home.redblue-ai.com
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: http://svc.redblue-ai.com:31761/eureka/
+
+server:
+  port: 8080
+
+hystrix:
+  command:
+    default:
+      execution:
+        timout:
+          enabled: false # 如果enabled设置为false，则请求超时交给ribbon控制,为true,则超时作为熔断根据
+        isolation:
+          thread:
+            timeoutInMilliseconds: 5000 # 断路器超时时间，默认1000ms，需要大于Ribbon的超时时间，不然不会触发重试。如果使用ribbon和hystrix,设置超时时间
+
+demo-hystrix:
+  ribbon:
+     ConnectTimeout: 1000 # http建立socket超时时间
+     ReadTimeout: 1000 # http读取响应socket超时时间
+     OkToRetryOnAllOperations: true # 是否所有的操作都重试
+     MaxAutoRetriesNextServer: 1 # 重试负载均衡其他实例的最大重试次数,不包括首次实例
+     MaxAutoRetries: 1 # 同一台实例的最大重试次数,不包括首次调用
